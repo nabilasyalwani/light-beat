@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Light Beat</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <link type="text/css" rel="stylesheet" href="main.css" />
+  </head>
+  <body>
+    <div id="overlay"></div>
+    <section class="menu menu_start">
+      <h4>Welcome to</h4>
+      <h1>Light Beat</h1>
+      <h5>Wanna start the game?</h5>
+      <button type="button" class="btn_start">YES</button>
+    </section>
+    <div class="container hidden">
+      <section class="menu menu_diff hidden">
+        <p class="message">Which game mode would you like to play?</p>
+        <button type="button" class="btn btn_diff grad1" data-diff="easy">
+          Easy
+        </button>
+        <button type="button" class="btn btn_diff grad2" data-diff="hard">
+          Hard
+        </button>
+      </section>
+      <section class="menu menu_play hidden">
+        <p class="message">Get ready to play!</p>
+        <button type="button" class="btn btn_play grad1">Play</button>
+        <button type="button" class="btn btn_back grad2">Back</button>
+      </section>
+    </div>
+    <section class="gameSection hidden">
+      <button id="playButton">Play Music</button>
+      <div id="infoChangeColor">
+        <div>Change Color:</div>
+        <div class="colorIndicator">
+          <div id="colorIndicatorPink"></div>
+          <p>: Keyboard A</p>
+        </div>
+        <div class="colorIndicator">
+          <div id="colorIndicatorBlue"></div>
+          <p>: Keyboard D</p>
+        </div>
+      </div>
+      <div id="infoScore">0</div>
+      <div id="infoCombo">Combo: 0</div>
+      <button id="btnBack">Back</button>
+    </section>
+    <section class="score_board hidden">
+      <h2>Your Score</h2>
+      <h1 id="finalScore">0</h1>
+      <p id="maxCombo">Max Combo: 0</p>
+      <div class="buttonAfterGame">
+        <button type="button" class="btn btn_restart grad1">Restart</button>
+        <button type="button" class="btn btn_home grad2">Home</button>
+      </div>
+    </section>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../build/three.webgpu.js",
+          "three/webgpu": "../build/three.webgpu.js",
+          "three/tsl": "../build/three.tsl.js",
+          "three/addons/": "./jsm/",
+          "stats-gl": "https://cdn.jsdelivr.net/npm/stats-gl@3.6.0/dist/main.js"
+        }
+      }
+    </script>
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
