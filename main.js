@@ -352,7 +352,10 @@ function setupAudioForDiff() {
     analyser?.disconnect();
   } catch {}
 
-  const file = diffGame === "easy" ? "/music/song2.mp3" : "/music/song1.mp3";
+  const file =
+    diffGame === "easy"
+      ? "/light-beat/music/song2.mp3"
+      : "/light-beat/music/song1.mp3";
   diffBeat = diffGame === "easy" ? 60 : 30;
 
   audio = new Audio(file);
