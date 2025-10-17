@@ -6,7 +6,7 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-let camera, scene, renderer, loader, fbxLoader, controls;
+let camera, scene, renderer, loader, fbxLoader, controls, torus, circle;
 let audio, context, analyser, dataArray, bufferLength, src;
 let audioToggle = false;
 let lastEnergy = 0;
@@ -254,6 +254,43 @@ function spawnCube() {
   });
 }
 
+function createTorus(color, texture = null, radius = 1, tubeRadius = 10) {
+  const geometry = new THREE.TorusGeometry(radius, tubeRadius, 40, 100);
+  let material;
+
+  if (texture) {
+    const tex = new THREE.TextureLoader().load(texture);
+    material = new THREE.MeshPhysicalMaterial({
+      map: tex,
+      metalness: 1.0,
+      roughness: 0.2,
+      envMapIntensity: 1.0,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.1,
+    });
+  } else {
+    material = new THREE.MeshPhysicalMaterial({
+      color: color,
+      metalness: 1.0,
+      roughness: 0.2,
+    });
+  }
+
+  const sphere = new THREE.Mesh(geometry, material);
+  sphere.castShadow = true;
+  sphere.receiveShadow = true;
+  return sphere;
+}
+
+function createCircle(size = 1, color = 0xffffff) {
+  const segments = 64;
+  const geometry = new THREE.CircleGeometry(size, segments);
+  const material = new THREE.MeshBasicMaterial({ color: color });
+  const circle = new THREE.Mesh(geometry, material);
+  circle.rotation.x = -Math.PI / 2;
+  return circle;
+}
+
 function createDirectionalLight(color, intensity = 2) {
   const light = new THREE.DirectionalLight(color, intensity);
 
@@ -392,6 +429,34 @@ function setOrbitEnabled(enabled) {
   controls.enableZoom = enabled;
 }
 
+function playSkyboxIntro(duration = 3) {
+  const target = controls?.target
+    ? controls.target.clone()
+    : new THREE.Vector3(0, 0, 0);
+  const radius = camera.position.distanceTo(target) || 100;
+
+  camera.position.set(0, -radius, 0);
+  camera.lookAt(target);
+  controls?.update();
+
+  gsap.to(camera.position, {
+    x: 0,
+    y: 0,
+    z: radius,
+    duration,
+    ease: "power2.inOut",
+    onUpdate: () => {
+      camera.lookAt(target);
+      controls?.update();
+    },
+    onComplete: () => {
+      camera.lookAt(target);
+      controls?.update();
+      spawnCube();
+    },
+  });
+}
+
 function init() {
   camera = new THREE.PerspectiveCamera(
     45,
@@ -405,8 +470,14 @@ function init() {
   scene = new THREE.Scene();
   scene.add(new THREE.AmbientLight(0x111122, 3));
 
-  spawnCube();
-  createDirectionalLight(0xffffff, 1);
+  torus = createTorus(0x222244, "/texture/metal.jpg", 100);
+  torus.position.set(0, -200, 0);
+  torus.rotation.x = -Math.PI / 2;
+  scene.add(torus);
+
+  circle = createCircle(75, 0xffc0e0);
+  circle.position.set(0, -200, 0);
+  scene.add(circle);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(window.devicePixelRatio);
@@ -453,6 +524,9 @@ function init() {
       updateNeonColor();
     }
   });
+
+  playSkyboxIntro(3);
+  createDirectionalLight(0xffffff, 1);
 }
 
 function loadModel() {
